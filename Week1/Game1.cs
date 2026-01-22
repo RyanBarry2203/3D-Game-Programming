@@ -8,14 +8,21 @@ namespace Week1
     public class Game1 : Game
     {
         private GraphicsDeviceManager _graphics;
-        private SpriteBatch _spriteBatch;
+        //private SpriteBatch _spriteBatch;
 
-        VertexPositionColor[] colorVertices;
+        VertexPositionColorTexture[] colorVertices;
         BasicEffect colorEffect;
 
         Matrix worldTransform;
         Matrix view;
         Matrix projection;
+
+        Texture2D texture;
+        int[] indices;
+
+        VertexBuffer vbuffer;
+        IndexBuffer ibuffer;
+
 
         public Game1()
         {
@@ -31,19 +38,38 @@ namespace Week1
         {
             // TODO: Add your initialization logic here
 
-            colorVertices = new VertexPositionColor[6];
+            texture = Content.Load<Texture2D>("test_texture");
 
-            colorVertices[0] = new VertexPositionColor(new Vector3(1, -1, 0), Color.Red);
-            colorVertices[1] = new VertexPositionColor(new Vector3(-1, -1, 0), Color.Green);
-            colorVertices[2] = new VertexPositionColor(new Vector3(-1, 1, 0), Color.Blue);
+            colorVertices = new VertexPositionColorTexture[4];
 
-            colorVertices[3] = new VertexPositionColor(new Vector3(1, -1, 0), Color.Red);
-            colorVertices[4] = new VertexPositionColor(new Vector3(-1, 1, 0), Color.Green);
-            colorVertices[5] = new VertexPositionColor(new Vector3(1, 1, 0), Color.Blue);
+            colorVertices[0] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(1, 1));
+            colorVertices[1] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(0, 1));
+            colorVertices[2] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(0, 0));
+            colorVertices[3] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(1, 0));
+
+            indices = new int[6];
+
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+
+
+            indices[3] = 0;
+            indices[4] = 2;
+            indices[5] = 3;
+
+            vbuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColorTexture), colorVertices.Length, BufferUsage.WriteOnly);
+            ibuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Length, BufferUsage.WriteOnly);
+
+            vbuffer.SetData(colorVertices);
+            ibuffer.SetData(indices);
+
 
             colorEffect = new BasicEffect(GraphicsDevice);
             colorEffect.VertexColorEnabled = true;
-            colorEffect.TextureEnabled = false;
+            colorEffect.TextureEnabled = true;
+            colorEffect.Texture = texture;
+
 
             worldTransform = Matrix.Identity * Matrix.CreateTranslation(0,0,-2);
 
@@ -56,7 +82,7 @@ namespace Week1
 
         protected override void LoadContent()
         {
-            _spriteBatch = new SpriteBatch(GraphicsDevice);
+            //_spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
         }
@@ -79,13 +105,21 @@ namespace Week1
             colorEffect.Projection = projection;
             colorEffect.World = worldTransform;
 
+
             // TODO: Add your drawing code here
+
+            GraphicsDevice.Indices = ibuffer;
+            GraphicsDevice.SetVertexBuffer(vbuffer);
 
             foreach (EffectPass pass in colorEffect.CurrentTechnique.Passes)
             {
                 pass.Apply();
 
-                GraphicsDevice.DrawUserPrimitives(PrimitiveType.TriangleList, colorVertices, 0,colorVertices.Length / 3);
+                GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,
+                    colorVertices, 0,colorVertices.Length,
+                    indices,
+                    0,
+                    indices.Length / 3);
             }
 
             base.Draw(gameTime);
