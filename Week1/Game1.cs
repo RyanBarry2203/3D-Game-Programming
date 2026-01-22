@@ -10,7 +10,7 @@ namespace Week1
         private GraphicsDeviceManager _graphics;
         //private SpriteBatch _spriteBatch;
 
-        VertexPositionColorTexture[] colorVertices;
+        VertexPositionColor[] colorVertices;
         BasicEffect colorEffect;
 
         Matrix worldTransform;
@@ -40,23 +40,45 @@ namespace Week1
 
             texture = Content.Load<Texture2D>("test_texture");
 
-            colorVertices = new VertexPositionColorTexture[4];
+            //colorVertices = new VertexPositionColorTexture[4];
 
-            colorVertices[0] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(1, 1));
-            colorVertices[1] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(0, 1));
-            colorVertices[2] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(0, 0));
-            colorVertices[3] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(1, 0));
+            //colorVertices[0] = new VertexPositionColorTexture(new Vector3(1, -1, 0), Color.White, new Vector2(1, 1));
+            //colorVertices[1] = new VertexPositionColorTexture(new Vector3(-1, -1, 0), Color.White, new Vector2(0, 1));
+            //colorVertices[2] = new VertexPositionColorTexture(new Vector3(-1, 1, 0), Color.White, new Vector2(0, 0));
+            //colorVertices[3] = new VertexPositionColorTexture(new Vector3(1, 1, 0), Color.White, new Vector2(1, 0));
 
-            indices = new int[6];
+            //indices = new int[6];
+
+            //indices[0] = 0;
+            //indices[1] = 1;
+            //indices[2] = 2;
+
+
+            //indices[3] = 0;
+            //indices[4] = 2;
+            //indices[5] = 3;
+
+            colorVertices = new VertexPositionColor[4];
+
+            colorVertices[0] = new VertexPositionColor(new Vector3(0, 0, 0), Color.White);//middle
+            colorVertices[1] = new VertexPositionColor(new Vector3(0, 1, 0), Color.White);//top
+            colorVertices[2] = new VertexPositionColor(new Vector3(1, -1, 0), Color.White);//right
+            colorVertices[3] = new VertexPositionColor(new Vector3(-1, -1, 0), Color.White);//left
+
+            indices = new int[9];
 
             indices[0] = 0;
-            indices[1] = 1;
+            indices[1] = 1; // red
             indices[2] = 2;
 
+            indices[3] = 2;
+            indices[4] = 3; // yellow
+            indices[5] = 0;
 
-            indices[3] = 0;
-            indices[4] = 2;
-            indices[5] = 3;
+            indices[6] = 0;
+            indices[7] = 3; // green
+            indices[8] = 1;
+
 
             vbuffer = new VertexBuffer(GraphicsDevice, typeof(VertexPositionColorTexture), colorVertices.Length, BufferUsage.WriteOnly);
             ibuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.ThirtyTwoBits, indices.Length, BufferUsage.WriteOnly);
@@ -115,11 +137,7 @@ namespace Week1
             {
                 pass.Apply();
 
-                GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList,
-                    colorVertices, 0,colorVertices.Length,
-                    indices,
-                    0,
-                    indices.Length / 3);
+                GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, colorVertices, 0, colorVertices.Length, indices, 0, indices.Length / 9);
             }
 
             base.Draw(gameTime);
